@@ -12,8 +12,9 @@ import time
 
 def get_driver():
     options = Options()
-    # אם ברצונך לראות את ההתנהגות הגראפית של הדפדפן
-    # options.add_argument("--headless=new")  # לבטל את ה‑headless
+    # משתמש ב‑headless החדש
+    options.add_argument("--headless=new")
+    # מבטל שימוש ב‑GPU/רוסטר תוכנה שמייצר שגיאות דחיית DirectComposition
     options.add_argument("--disable-gpu")
     options.add_argument("--disable-software-rasterizer")
     options.add_argument("--no-sandbox")
