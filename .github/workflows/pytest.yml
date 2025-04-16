@@ -3,10 +3,10 @@ name: Run Pytest Tests and Generate Allure Report
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
   workflow_dispatch:
 
 jobs:
@@ -24,8 +24,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r auto/requirements.txt  # שינוי הנתיב ל-requirements.txt בתיקיית auto
-
+          cd auto  # נכנס לתיקיית האוטומציה
+          pip install -r requirements.txt  # מתקין את הדרישות
       - name: Install Allure
         run: |
           sudo apt-get update
@@ -33,15 +33,12 @@ jobs:
           curl -o allure-2.14.0.zip -L https://github.com/allure-framework/allure2/releases/download/2.14.0/allure-2.14.0.zip
           unzip allure-2.14.0.zip -d /opt
           sudo ln -s /opt/allure-2.14.0/bin/allure /usr/local/bin/allure
-
       - name: Run Pytest and generate allure results
         run: |
-          pytest auto/test_survey.py --alluredir=allure-results  # שינוי הנתיב לקובץ הבדיקות בתיקיית auto
-
+          pytest auto/test_survey.py --alluredir=allure-results
       - name: List allure-results directory
         run: |
           ls allure-results
-
       - name: Generate Allure Report (HTML)
         run: |
           allure generate allure-results --clean -o allure-report
