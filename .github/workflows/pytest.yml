@@ -3,28 +3,29 @@ name: Run Pytest Tests and Generate Allure Report
 on:
   push:
     branches:
-      - master
+      - main  # הפעלת ה־CI/CD רק כאשר יש שינויים ב־main
   pull_request:
     branches:
-      - master
-  workflow_dispatch:
+      - main  # הפעלת ה־CI/CD גם כאשר יש PR למיין
+  workflow_dispatch:  # מאפשר להריץ את ה־workflow ידנית
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # הריצה תתבצע על מערכת Ubuntu
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2  # שיכפול הקוד שלך מהמאגה של GitHub
 
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
+          python-version: '3.8'  # הגדרת גרסת פייתון
 
       - name: Install dependencies
         run: |
-          pip install -r auto/requirements.txt  # שינוי הנתיב ל-requirements.txt בתיקיית auto
+          cd auto  # גישה לתיקיית האוטומציה
+          pip install -r requirements.txt  # התקנת כל התלויות של פרויקט הפייתון
 
       - name: Install Allure
         run: |
@@ -32,17 +33,24 @@ jobs:
           sudo apt-get install -y default-jre
           curl -o allure-2.14.0.zip -L https://github.com/allure-framework/allure2/releases/download/2.14.0/allure-2.14.0.zip
           unzip allure-2.14.0.zip -d /opt
-          sudo ln -s /opt/allure-2.14.0/bin/allure /usr/local/bin/allure
+          sudo ln -s /opt/allure-2.14.0/bin/allure /usr/local/bin/allure  # התקנת Allure להפקת דוחות
 
       - name: Run Pytest and generate allure results
         run: |
-          pytest auto/test_survey.py --alluredir=allure-results  # שינוי הנתיב לקובץ הבדיקות בתיקיית auto
+          cd auto  # גישה לתיקיית האוטומציה
+          pytest test_survey.py --alluredir=allure-results  # הרצת pytest והפקת תוצאות ל־Allure
 
       - name: List allure-results directory
         run: |
-          ls allure-results
+          ls allure-results  # הצגת תוצאות הבדיקות שנוצרו
 
       - name: Generate Allure Report (HTML)
         run: |
-          allure generate allure-results --clean -o allure-report
-          ls allure-report
+          allure generate allure-results --clean -o allure-report  # יצירת דוח Allure
+          ls allure-report  # הצגת דוח Allure
+
+      - name: Upload Allure Report Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: allure-report
+          path: allure-report  # העלאת הדוח ל-GitHub
