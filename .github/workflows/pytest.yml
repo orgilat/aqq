@@ -3,52 +3,46 @@ name: Run Pytest Tests and Generate Allure Report
 on:
   push:
     branches:
-      - main  # להריץ את הבדיקות רק כאשר יש שינוי ב-main
+      - master
   pull_request:
     branches:
-      - main  # להריץ את הבדיקות כאשר יש pull request ל-main
-  workflow_dispatch:  # מאפשר להריץ ידנית דרך כפתור בגיטהאב
+      - master
+  workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.8'
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
 
-    - name: Install dependencies
-      run: |
-        pip install -r auto/requirements.txt  # כאן מציינים את הנתיב המתאים ל-requirements.txt בתיקיית auto
+      - name: Install dependencies
+        run: |
+          pip install -r auto/requirements.txt  # שינוי הנתיב ל-requirements.txt בתיקיית auto
 
-    - name: Install Allure
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y default-jre
-        curl -o allure-2.14.0.zip -L https://github.com/allure-framework/allure2/releases/download/2.14.0/allure-2.14.0.zip
-        unzip allure-2.14.0.zip -d /opt
-        sudo ln -s /opt/allure-2.14.0/bin/allure /usr/local/bin/allure
+      - name: Install Allure
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y default-jre
+          curl -o allure-2.14.0.zip -L https://github.com/allure-framework/allure2/releases/download/2.14.0/allure-2.14.0.zip
+          unzip allure-2.14.0.zip -d /opt
+          sudo ln -s /opt/allure-2.14.0/bin/allure /usr/local/bin/allure
 
-    - name: Run Pytest and generate allure results
-      run: |
-        pytest auto/test_survey.py --alluredir=allure-results  # כאן מציינים את הנתיב המתאים לקובץ הבדיקות בתיקיית auto
+      - name: Run Pytest and generate allure results
+        run: |
+          pytest auto/test_survey.py --alluredir=allure-results  # שינוי הנתיב לקובץ הבדיקות בתיקיית auto
 
-    - name: List allure-results directory
-      run: |
-        ls allure-results
+      - name: List allure-results directory
+        run: |
+          ls allure-results
 
-    - name: Generate Allure Report (HTML)
-      run: |
-        allure generate allure-results --clean -o allure-report
-        ls allure-report
-
-    - name: Upload Allure Report
-      uses: actions/upload-artifact@v2  # השתנה לגרסה v2
-      with:
-        name: allure-report
-        path: allure-report
+      - name: Generate Allure Report (HTML)
+        run: |
+          allure generate allure-results --clean -o allure-report
+          ls allure-report
