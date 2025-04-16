@@ -46,9 +46,3 @@ jobs:
         run: |
           allure generate allure-results --clean -o allure-report
           ls allure-report
-
-      - name: Upload Allure report as an artifact
-        uses: actions/upload-artifact@v3  # עדכון לגרסה החדשה
-        with:
-          name: allure-report
-          path: allure-report
