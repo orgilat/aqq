@@ -12,14 +12,11 @@ import time
 
 def get_driver():
     options = Options()
-    # משתמש ב‑headless החדש
-    options.add_argument("--headless=new")
-    # מבטל שימוש ב‑GPU/רוסטר תוכנה שמייצר שגיאות דחיית DirectComposition
-    options.add_argument("--disable-gpu")
-    options.add_argument("--disable-software-rasterizer")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    return webdriver.Chrome(options=options)
+    options.add_argument("--headless")  # הפעלת מצב Headless
+    options.add_argument("--no-sandbox")  # אופציה שמפחיתה בעיות עם Docker
+    options.add_argument("--disable-dev-shm-usage")  # עוזר לשפר את הביצועים במערכות CI/CD
+    driver = webdriver.Chrome(options=options)
+    return driver
 
 
 def close_alert_if_present(driver):
