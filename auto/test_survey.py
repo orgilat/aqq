@@ -12,9 +12,12 @@ import time
 
 def get_driver():
     options = Options()
-    options.add_argument('--headless')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--disable-dev-shm-usage')
+    # אם ברצונך לראות את ההתנהגות הגראפית של הדפדפן
+    # options.add_argument("--headless=new")  # לבטל את ה‑headless
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-software-rasterizer")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     return webdriver.Chrome(options=options)
 
 
