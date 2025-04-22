@@ -5,11 +5,16 @@ import pytest
 from collections import namedtuple
 from selenium import webdriver
 
-DriverWithName = namedtuple('DriverWithName', ['driver', 'browser_name'])
+# ────────────────────────────────────────────────────────────────────────────────
+# 1) הוספת תיקיית auto (שם נמצאים test_survey.py ו־pages/) ל־PYTHONPATH
 
-@pytest.fixture
+# ────────────────────────────────────────────────────────────────────────────────
+
+
+
+@pytest.fixture(params=["chrome", "firefox"])
 def driver(request):
-    browser_name = request.param  # יבוא מבחוץ! לא מוגדר פה.
+    browser_name = request.param
 
     if browser_name == "chrome":
         opts = webdriver.ChromeOptions()
@@ -25,5 +30,5 @@ def driver(request):
     else:
         raise ValueError(f"Unsupported browser: {browser_name}")
 
-    yield DriverWithName(inst, browser_name)
+
     inst.quit()

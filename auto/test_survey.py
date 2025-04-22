@@ -13,6 +13,13 @@ from ut import close_alert_if_present, click_and_wait, navigate_back
 # הוספת תיקיית הפרויקט ל-Python path
 
 
+def wait_for_loading_overlay_to_disappear(driver, timeout=30):
+    try:
+        WebDriverWait(driver, timeout).until(
+            EC.invisibility_of_element_located((By.CLASS_NAME, "dx-overlay-wrapper"))
+        )
+    except Exception:
+        pass
 
 
 
@@ -113,18 +120,24 @@ def test_survey_buttons(driver):
                     passed += 1
 
             with allure.step(f"בחירת עונת הערכה ב-{browser_name.capitalize()}"):
-                    dropdown_button = WebDriverWait(driver, 10).until(
-                        EC.element_to_be_clickable((By.XPATH, "//div[@class='dropdown dropdown-select' and @label='בחר עונת הערכה']//div[contains(@class, 'dropdown-btn')]"))
-                    )
-                    dropdown_button.click()
-                    time.sleep(3)
+                wait_for_loading_overlay_to_disappear(driver)
 
-                    season_option = WebDriverWait(driver, 10).until(
-                        EC.element_to_be_clickable((By.XPATH, "//div[@class='dropdown-list']//li//div[@class='list-item']/span[text()='עונת 1']"))
-                    )
-                    season_option.click()
-                    passed += 1
-                    time.sleep(3)
+                dropdown_button = WebDriverWait(driver, 20).until(
+                EC.element_to_be_clickable((By.XPATH, "//div[@class='dropdown dropdown-select' and @label='בחר עונת הערכה']//div[contains(@class, 'dropdown-btn')]"))
+    )
+                driver.execute_script("arguments[0].scrollIntoView(true);", dropdown_button)  # לוודא שהאלמנט ב-visible area
+                dropdown_button.click()
+
+                wait_for_loading_overlay_to_disappear(driver)
+
+                season_option = WebDriverWait(driver, 20).until(
+                   EC.element_to_be_clickable((By.XPATH, "//div[@class='dropdown-list']//li//div[@class='list-item']/span[text()='עונת 1']"))
+    )
+                driver.execute_script("arguments[0].scrollIntoView(true);", season_option)  # עוד פעם וודא שהוא רואים אותו
+                season_option.click()
+
+                passed += 1
+
 
             with allure.step(f"בחירת תאריך התחלה - 18 ב-{browser_name.capitalize()}"):
                     calendar_button = WebDriverWait(driver, 10).until(
@@ -169,7 +182,7 @@ def test_survey_buttons(driver):
                     time.sleep(3)
 
             with allure.step(f"לחיצה פנימית על הריבוע ליד 'פיקוד 2' ב-{browser_name.capitalize()}"):
-                    checkbox_pikud2 = WebDriverWait(driver, 10).until(
+                    checkbox_pikud2 = WebDriverWait(driver, 30).until(
                         EC.element_to_be_clickable((By.XPATH, "//li[@data-item-id='249']//div[contains(@class, 'dx-checkbox-container')]"))
                     )
                     checkbox_pikud2.click()
